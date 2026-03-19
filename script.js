@@ -1,0 +1,200 @@
+// ===== PRESET DATA =====
+const presets = [
+  {
+    id: 1,
+    name: "AMBIGU KECOUD typography by ClayonSR",
+    desc: "Preset Alight Motion eksklusif — typography estetik dengan efek dan transisi premium.",
+    size: "210 KB",
+    type: "XML",
+    icon: "✦",
+    color: "linear-gradient(135deg, #1a0a2e, #0d1a3e)",
+    file: "AMBIGU-KECOUD-typography-by-ClayonSR.xml",
+  },
+];
+
+// ===== RENDER DOWNLOAD CARDS =====
+function renderDownloadCards() {
+  const grid = document.getElementById("downloadGrid");
+  presets.forEach((preset, index) => {
+    const card = document.createElement("div");
+    card.className = "download-card";
+    card.style.transitionDelay = `${index * 50}ms`;
+    card.innerHTML = `
+      <div class="card-icon" style="background: ${preset.color};">
+        ${preset.icon}
+      </div>
+      <div class="card-body">
+        <h3>${preset.name}</h3>
+        <p>${preset.desc}</p>
+        <div class="card-meta">
+          <span class="card-size">${preset.size}</span>
+          <span class="card-type">${preset.type}</span>
+        </div>
+      </div>
+      <button class="btn-download" onclick="handleDownload(${preset.id})" aria-label="Download ${preset.name}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </button>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ===== DOWNLOAD HANDLER =====
+function handleDownload(presetId) {
+  const preset = presets.find((p) => p.id === presetId);
+  if (!preset) return;
+
+  showLoading(preset.name);
+
+  let progress = 0;
+  const fill = document.getElementById("loadingFill");
+  const loadingText = document.getElementById("loadingText");
+
+  const steps = [
+    { at: 0,  text: "Mempersiapkan file..." },
+    { at: 30, text: "Mengemas preset..." },
+    { at: 60, text: "Hampir selesai..." },
+    { at: 90, text: "Menyelesaikan download..." },
+  ];
+
+  const interval = setInterval(() => {
+    progress += Math.random() * 18 + 4;
+    if (progress > 100) progress = 100;
+    fill.style.width = progress + "%";
+
+    const step = [...steps].reverse().find((s) => progress >= s.at);
+    if (step) loadingText.textContent = step.text;
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        hideLoading();
+        triggerFileDownload(preset);
+        showToast(preset.name);
+      }, 400);
+    }
+  }, 80);
+}
+
+// ===== TRIGGER FILE DOWNLOAD =====
+function triggerFileDownload(preset) {
+  const link = document.createElement("a");
+  link.href = "presets/" + preset.file;
+  link.download = preset.file;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ===== LOADING OVERLAY =====
+function showLoading() {
+  document.getElementById("loadingText").textContent = "Mempersiapkan file...";
+  document.getElementById("loadingFill").style.width = "0%";
+  document.getElementById("loadingOverlay").classList.add("show");
+}
+
+function hideLoading() {
+  document.getElementById("loadingOverlay").classList.remove("show");
+}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(presetName) {
+  const toast = document.getElementById("toast");
+  document.getElementById("toastTitle").textContent = "Download berhasil!";
+  document.getElementById("toastSub").textContent = `${presetName} telah diunduh.`;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 4000);
+}
+
+function hideToast() {
+  document.getElementById("toast").classList.remove("show");
+}
+
+// ===== NAVBAR SCROLL =====
+function initNavbar() {
+  const navbar = document.getElementById("navbar");
+  window.addEventListener("scroll", () => {
+    navbar.classList.toggle("scrolled", window.scrollY > 40);
+  });
+}
+
+// ===== HAMBURGER MENU =====
+function initHamburger() {
+  const btn = document.getElementById("hamburger");
+  const menu = document.getElementById("mobileMenu");
+  let open = false;
+
+  btn.addEventListener("click", () => {
+    open = !open;
+    menu.classList.toggle("open", open);
+    const spans = btn.querySelectorAll("span");
+    if (open) {
+      spans[0].style.transform = "rotate(45deg) translateY(7px)";
+      spans[1].style.opacity = "0";
+      spans[2].style.transform = "rotate(-45deg) translateY(-7px)";
+    } else {
+      spans[0].style.transform = "";
+      spans[1].style.opacity = "";
+      spans[2].style.transform = "";
+    }
+  });
+
+  document.querySelectorAll(".mobile-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      open = false;
+      menu.classList.remove("open");
+      const spans = btn.querySelectorAll("span");
+      spans[0].style.transform = "";
+      spans[1].style.opacity = "";
+      spans[2].style.transform = "";
+    });
+  });
+}
+
+// ===== SCROLL ANIMATIONS =====
+function initScrollAnimations() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".download-card").forEach((el) => observer.observe(el));
+}
+
+// ===== ACTIVE NAV LINK =====
+function initActiveNav() {
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".nav-link");
+
+  window.addEventListener("scroll", () => {
+    let current = "";
+    sections.forEach((section) => {
+      if (window.scrollY >= section.offsetTop - 100) current = section.getAttribute("id");
+    });
+    navLinks.forEach((link) => {
+      link.style.color = link.getAttribute("href") === `#${current}` ? "var(--text-primary)" : "";
+    });
+  });
+}
+
+// ===== INIT =====
+document.addEventListener("DOMContentLoaded", () => {
+  renderDownloadCards();
+  initNavbar();
+  initHamburger();
+  initScrollAnimations();
+  initActiveNav();
+
+  document.getElementById("loadingOverlay").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) hideLoading();
+  });
+});
