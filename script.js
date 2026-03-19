@@ -8,7 +8,7 @@ const presets = [
                       type: "XML",
                           icon: "✦",
                               color: "linear-gradient(135deg, #1a0a2e, #0d1a3e)",
-                                  file: "AMBIGU KECOUD typography by CSR'.xml",
+                                  file: "AMBIGU-KECOUD-typography-by-CSR'.xml",
                                     },
                                     ];
 
