@@ -1203,3 +1203,26 @@ img { max-width: 100%; }
   .orb-2 { width: 220px; height: 220px; }
   .orb-3 { display: none; }
 }
+
+/* ===== AM LINK BUTTON ===== */
+.btn-am-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #c084fc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: var(--transition);
+  width: fit-content;
+}
+.btn-am-link:hover {
+  background: rgba(168, 85, 247, 0.22);
+  border-color: rgba(168, 85, 247, 0.6);
+  color: #e879f9;
+  transform: translateY(-1px);
+}
